@@ -16,39 +16,56 @@ const canvas = document.querySelector("canvas.webgl");
 const scene = new THREE.Scene();
 
 /**
+ * Texture
+ */
+const textureLoader = new THREE.TextureLoader();
+const particleTexture = textureLoader.load("/textures/particles/8.png");
+
+/**
  * Model
  */
-
 let mixer;
 
 const gltfLoader = new GLTFLoader();
+
 gltfLoader.load("/models/Fox/glTF/Fox.gltf", (gltf) => {
   gltf.scene.scale.set(0.025, 0.025, 0.025);
 
   scene.add(gltf.scene);
-
-  console.log(gltf.scene);
+  console.log(gltf);
 
   mixer = new THREE.AnimationMixer(gltf.scene);
-  const action = mixer.clipAction(gltf.animations[0]);
+  const action = mixer.clipAction(gltf.animations[2]);
+
   action.play();
 });
 
 /**
  * Floor
  */
-const floor = new THREE.Mesh(
-  new THREE.PlaneGeometry(10, 10),
-  new THREE.MeshStandardMaterial({
-    color: "#444444",
-    metalness: 0,
-    roughness: 0.5,
-  })
-);
-floor.receiveShadow = true;
-floor.rotation.x = -Math.PI * 0.5;
-scene.add(floor);
+const count = 500;
+const particlesGeometry = new THREE.BufferGeometry();
+const positions = new Float32Array(count * 3);
 
+for (let i = 0; i < count * 3; i++) {
+  positions[i] = (Math.random() - 0.5) * 20;
+}
+
+particlesGeometry.setAttribute(
+  "position",
+  new THREE.BufferAttribute(positions, 3)
+);
+
+const particlesMaterial = new THREE.PointsMaterial({
+  size: 0.2,
+  sizeAttenuation: true,
+  depthWrite: false,
+  alphaMap: particleTexture,
+  transparent: true,
+});
+
+const particles = new THREE.Points(particlesGeometry, particlesMaterial);
+scene.add(particles);
 /**
  * Lights
  */
@@ -98,7 +115,7 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   100
 );
-camera.position.set(2, 2, 2);
+camera.position.set(5, 5, 5);
 scene.add(camera);
 
 // Controls
