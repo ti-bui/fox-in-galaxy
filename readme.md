@@ -1,4 +1,5 @@
-# Three.js Journey
+# Three.js Journey: (https://threejs-journey.com/).
+In this experiment, I combine the Particles and Imported Model lessons together to have this visual of a fox running in galaxy.
 
 ## Setup
 Download [Node.js](https://nodejs.org/en/download/).
